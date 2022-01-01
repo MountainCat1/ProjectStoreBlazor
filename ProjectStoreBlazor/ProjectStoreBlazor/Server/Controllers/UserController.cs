@@ -20,8 +20,6 @@ namespace ProjectStoreBlazor.Server.Controllers
             _userService.RegisterUser(dto);
             return Ok();
         }
-
-
         [HttpPost("login")]
         public IActionResult Login([FromBody] LoginDto dto)
         {
