@@ -20,17 +20,17 @@ namespace ProjectStoreBlazor.Server.Controllers
 
         // Product CRUD
         [HttpGet]
-        public async Task<IActionResult> ProductGetAsync()
+        public async Task<IActionResult> ProductGet()
         {
             return Ok(await service.ProductGet());
         }
         [HttpGet("{id}")]
-        public async Task<IActionResult> ProductGetAsync([FromRoute] int id)
+        public async Task<IActionResult> ProductGet([FromRoute] int id)
         {
             return Ok(await service.ProductGet(id));
         }
         [HttpPost]
-        public async Task<IActionResult> ProductAddAsync([FromForm] ProductDto product)
+        public async Task<IActionResult> ProductAdd([FromForm] ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
 
@@ -42,7 +42,7 @@ namespace ProjectStoreBlazor.Server.Controllers
             return Ok();
         }
         [HttpDelete("{id}")]
-        public async Task<IActionResult> ProductDeleteAsync([FromRoute] int id)
+        public async Task<IActionResult> ProductDelete([FromRoute] int id)
         {
             Task task = service.ProductDelete(id, User);
 
