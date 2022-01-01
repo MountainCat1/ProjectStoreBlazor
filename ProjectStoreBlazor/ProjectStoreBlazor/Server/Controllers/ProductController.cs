@@ -2,9 +2,13 @@
 using ProjectStoreBlazor.Shared.Models;
 using ProjectStoreBlazor.Server.Services;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using System;
 
 namespace ProjectStoreBlazor.Server.Controllers
 {
+    [ApiController]
+    [Route("api/[controller]")]
     public class ProductController : Controller
     {
         private readonly IProductService service;
@@ -14,41 +18,43 @@ namespace ProjectStoreBlazor.Server.Controllers
             this.service = service;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
-
         // Product CRUD
+        [HttpGet]
+        public async Task<IActionResult> ProductGetAsync()
+        {
+            return Ok(await service.ProductGet());
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ProductGetAsync([FromRoute] int id)
+        {
+            return Ok(await service.ProductGet(id));
+        }
         [HttpPost]
-        [Route("Product/Add")]
-        public IActionResult ProductAdd(ProductDto product)
+        public async Task<IActionResult> ProductAddAsync([FromForm] ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
-            
-            string message = service.ProductAdd(product,userId);
-            return Created("", message);
+
+            Task task = service.ProductAdd(product, userId);
+
+            task.Start();
+            await task;
+
+            return Ok();
         }
-        [HttpGet]
-        [Route("Product/Get")]
-        public IActionResult ProductGet()
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> ProductDeleteAsync([FromRoute] int id)
         {
-            return Ok(service.ProductGet());
+            Task task = service.ProductDelete(id, User);
+
+            await task;
+            task.Start();
+
+            return Ok();
         }
-        [HttpDelete]
-        [Route("Product/Delete/{id}")]
-        public IActionResult ProductDelete([FromRoute] int id)
+        [HttpPut]
+        public IActionResult ProductUpdate([FromForm] ProductDto product)
         {
-            string message = service.ProductDelete(id,User);
-            return Ok(message);
-        }
-        [HttpPost]
-        [Route("Product/Update")]
-        public IActionResult ProductUpdate(ProductDto product)
-        {
-            string message = service.ProductUpdate(product,User);
-            return Ok(message);
+            return Ok(service.ProductUpdate(product, User));
         }
     }
 }

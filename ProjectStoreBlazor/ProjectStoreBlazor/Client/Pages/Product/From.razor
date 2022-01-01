@@ -1,0 +1,35 @@
+﻿<EditForm Model="@Dto" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Title:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Name" />
+            <ValidationMessage For="@(() => Dto.Name)" />
+        </div>
+    </div>
+    <div class="form-group ">
+        <div>
+            <label>Description:</label>
+            <div>
+                <InputText @bind-Value="@Dto.Description" />
+                <ValidationMessage For="@(() => Dto.Description)" />
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Team ID:</label>
+        <div>
+            <InputNumber @bind-Value="@Dto.Price" />
+            <ValidationMessage For="@(() => Dto.Price)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+</EditForm>
+@code {
+    [Parameter] public ProductDto Dto { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Save";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}

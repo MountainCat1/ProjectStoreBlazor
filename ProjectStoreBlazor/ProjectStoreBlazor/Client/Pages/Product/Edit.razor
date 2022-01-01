@@ -1,0 +1,24 @@
+﻿@page "/product/edit/{productId:int}"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit</h3>
+
+<From ButtonText="Edit" Dto="@dto" OnValidSubmit="@EditDto"/>
+
+@code {
+    [Parameter] public int productId { get; set; }
+    private ProductDto dto = new ProductDto();
+    private string controllerRoute = "api/product";
+    protected async override Task OnParametersSetAsync()
+    {
+        dto = await http.GetFromJsonAsync<ProductDto>($"{controllerRoute}/{productId}");
+    }
+    async Task EditDto()
+    {
+        await http.PutAsJsonAsync($"{controllerRoute}", dto);
+        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
+        uriHelper.NavigateTo("product");
+    }
+}

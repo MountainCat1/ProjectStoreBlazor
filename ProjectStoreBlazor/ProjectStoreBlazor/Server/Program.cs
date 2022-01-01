@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ProjectStoreBlazor.Server.Server
+namespace ProjectStoreBlazor.Server
 {
     public class Program
     {

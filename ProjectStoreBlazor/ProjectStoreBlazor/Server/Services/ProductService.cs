@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using ProjectStoreBlazor.Server.Authorization;
 using ProjectStoreBlazor.Server.Entities;
 using ProjectStoreBlazor.Server.Exceptions;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace ProjectStoreBlazor.Server.Services
 {
@@ -23,59 +25,16 @@ namespace ProjectStoreBlazor.Server.Services
             this.authorizationService = authorizationService;
         }
 
-        public string ProductAdd(ProductDto productDto,int userId )
+        public async Task<List<ProductDto>> ProductGet()
         {
             using var transaction = context.Database.BeginTransaction();
 
             try
             {
-                Product product = mapper.Map<Product>(productDto);
-                product.CreatedByUserId = userId;
-                context.Products.Add(product);
-                context.SaveChanges();
-                transaction.Commit();
-                return $"Product {product.Name} added";
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                return $"Error: {ex.Message}";
-            }
-        }
+                List<Product> entities = await context.Products.ToListAsync();
+                List<ProductDto> dtos = mapper.Map<List<ProductDto>>(entities);
 
-        public string ProductDelete(int id,ClaimsPrincipal user)
-        {
-            using var transaction = context.Database.BeginTransaction();
-
-            try
-            {
-                Product product = context.Products.Find(id);
-                var authorizationResult = authorizationService.AuthorizeAsync(user, product, new ResourceOperationRequirement(ResourceOperation.Delete)).Result;
-                if (!authorizationResult.Succeeded)
-                {
-                    throw new ForbidException();
-                }
-                context.Products.Remove(product);
-                context.SaveChanges();
-                transaction.Commit();
-                return $"Product {id} deleted";
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                return $"Error: {ex.Message}";
-            }
-        }
-
-        public List<ProductDto> ProductGet()
-        {
-            using var transaction = context.Database.BeginTransaction();
-
-            try
-            {
-                List<ProductDto> retList = mapper.Map<List<ProductDto>>(context.Products.ToList());
-
-                return retList;
+                return dtos;
             }
             catch (Exception ex)
             {
@@ -84,27 +43,99 @@ namespace ProjectStoreBlazor.Server.Services
             }
         }
 
-        public string ProductUpdate(ProductDto productDto,ClaimsPrincipal user)
+        public async Task<ProductDto> ProductGet(int id)
         {
             using var transaction = context.Database.BeginTransaction();
 
             try
             {
-                Product product = mapper.Map<Product>(productDto);
-                var authorizationResult =authorizationService.AuthorizeAsync(user, product, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
-                if (!authorizationResult.Succeeded) 
-                {
-                    throw new ForbidException();
-                }
-                context.Products.Update(product);
-                context.SaveChanges();
-                transaction.Commit();
-                return $"Product {product.Name} updated";
+                Product entity = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
+                ProductDto dto = mapper.Map<ProductDto>(entity);
+
+                return dto;
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-                return $"Error: {ex.Message}";
+                return null;
+            }
+        }
+
+        public async Task ProductAdd(ProductDto productDto,int userId )
+        {
+            using var transaction = await context.Database.BeginTransactionAsync();
+            try
+            {
+                Product product = mapper.Map<Product>(productDto);
+                product.CreatedByUserId = userId;
+                await context.Products.AddAsync(product);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                await Task.CompletedTask;
+            }
+        }
+
+        public async Task ProductDelete(int id, ClaimsPrincipal user)
+        {
+            using var transaction = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                Product product = await context.Products.FindAsync(id);
+                AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
+                    user, product, new ResourceOperationRequirement(ResourceOperation.Delete)
+                );
+
+                if (!authorizationResult.Succeeded)
+                {
+                    throw new ForbidException();
+                }
+                context.Products.Remove(product);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                await Task.CompletedTask;
+            }
+        }
+
+        public async Task ProductUpdate(ProductDto productDto,ClaimsPrincipal user)
+        {
+            using var transaction = await context.Database.BeginTransactionAsync();
+
+            try
+            {
+                Product product = mapper.Map<Product>(productDto);
+
+                AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
+                    user, product, new ResourceOperationRequirement(ResourceOperation.Update)
+                );
+                if (!authorizationResult.Succeeded) 
+                {
+                    throw new ForbidException();
+                }
+
+                context.Products.Update(product);
+                await context.SaveChangesAsync();
+                transaction.Commit();
+
+                await Task.CompletedTask;
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                await Task.CompletedTask;
             }
         }
     }

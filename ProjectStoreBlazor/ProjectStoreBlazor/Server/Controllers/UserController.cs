@@ -4,7 +4,7 @@ using ProjectStoreBlazor.Server.Services;
 
 namespace ProjectStoreBlazor.Server.Controllers
 {
-    [Route("user")] 
+    [Route("api/[controller]")] 
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -28,7 +28,6 @@ namespace ProjectStoreBlazor.Server.Controllers
             string token = _userService.GenerateJwt(dto);
             return Ok(token);
         }
-
     }
 
    

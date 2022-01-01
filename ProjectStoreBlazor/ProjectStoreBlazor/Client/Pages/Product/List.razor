@@ -1,0 +1,59 @@
+﻿@page "/product"
+@inject HttpClient client
+@inject IJSRuntime js
+
+<h3>Product</h3>
+
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>IsAvailable</th>
+        <th></th>
+    </tr>
+    @foreach (var product in Dtos)
+    {
+        <tr>
+            <td>@product.Id</td>
+            <td>@product.Name</td>
+            <td>@product.Description</td>
+            <td>@product.Price</td>
+            <td>
+                @if (product.IsAvailable)
+                {
+                    <span class="oi oi-check" aria-hidden="true"></span>
+                }
+                else
+                {
+                    <span class="oi oi-x" aria-hidden="true"></span>
+                }
+            </td>
+            <td>
+                <a class="btn btn-success" href="product/edit/@product.Id">Edit</a>
+                <button class="btn btn-danger" @onclick="@(() => Delete(product.Id))">Delete</button>
+            </td>
+        </tr>
+    }
+</table>
+
+
+@code {
+    private string controllerRoute = "api/product";
+    private ProductDto[] Dtos { get; set; } = new ProductDto[0];
+
+    protected override async Task OnInitializedAsync()
+    {
+        Dtos = await client.GetFromJsonAsync<ProductDto[]>($"{controllerRoute}");
+    }
+    async Task Delete(int id)
+    {
+        var dto = Dtos.First(x => x.Id == id);
+        if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {dto.Name}'s ({dto.Id}) Record?"))
+        {
+            await client.DeleteAsync($"{controllerRoute}/{id}");
+            await OnInitializedAsync();
+        }
+    } 
+}
