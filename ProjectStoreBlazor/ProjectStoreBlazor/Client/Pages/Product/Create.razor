@@ -1,0 +1,20 @@
+﻿@page "/product/create"
+@inject HttpClient http
+@inject NavigationManager uriHelper
+@inject IJSRuntime js
+
+<h3>Edit</h3>
+
+<From ButtonText="Create" Dto="@dto" OnValidSubmit="@CreateEntity"/>
+
+@code {
+    private string controllerRoute = "api/product";
+
+    private ProductDto dto = new ProductDto();
+    
+    async Task CreateEntity()
+    {
+        await http.PostAsJsonAsync($"{controllerRoute}", dto);
+        uriHelper.NavigateTo("product");
+    }
+}

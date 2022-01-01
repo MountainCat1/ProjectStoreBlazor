@@ -14,4 +14,13 @@
     <ProjectReference Include="..\Shared\ProjectStoreBlazor.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Shared\MainLayout.razor.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Shared\NavMenu.razor.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

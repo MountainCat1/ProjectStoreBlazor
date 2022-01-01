@@ -5,20 +5,23 @@
 
 <h3>Edit</h3>
 
-<From ButtonText="Edit" Dto="@dto" OnValidSubmit="@EditDto"/>
+<From ButtonText="Edit" Dto="@dto" OnValidSubmit="@EditEntity"/>
 
 @code {
-    [Parameter] public int productId { get; set; }
-    private ProductDto dto = new ProductDto();
     private string controllerRoute = "api/product";
+
+    [Parameter]
+    public int productId { get; set; }
+
+    private ProductDto dto = new ProductDto();
+    
     protected async override Task OnParametersSetAsync()
     {
         dto = await http.GetFromJsonAsync<ProductDto>($"{controllerRoute}/{productId}");
     }
-    async Task EditDto()
+    async Task EditEntity()
     {
         await http.PutAsJsonAsync($"{controllerRoute}", dto);
-        await js.InvokeVoidAsync("alert", $"Updated Successfully!");
         uriHelper.NavigateTo("product");
     }
 }
