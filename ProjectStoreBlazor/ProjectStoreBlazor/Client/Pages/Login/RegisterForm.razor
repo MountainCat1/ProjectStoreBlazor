@@ -17,11 +17,60 @@
     </div>
     <div class="form-group ">
         <label>Password:</label>
-            <div>
-                <InputText @bind-Value="@dto.Password" />
-                <ValidationMessage For="@(() => dto.Password)" />
-            </div>
+        <div>
+            <InputText @bind-Value="@dto.Password" />
+            <ValidationMessage For="@(() => dto.Password)" />
+        </div>
     </div>
+
+    <div class="form-group ">
+        <label>Confirm Password:</label>
+        <div>
+            <InputText @bind-Value="@dto.ConfirmPassword" />
+            <ValidationMessage For="@(() => dto.ConfirmPassword)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Name:</label>
+        <div>
+            <InputText @bind-Value="@dto.Name" />
+            <ValidationMessage For="@(() => dto.Name)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Surname:</label>
+        <div>
+            <InputText @bind-Value="@dto.Surname" />
+            <ValidationMessage For="@(() => dto.Surname)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Birthday:</label>
+        <div>
+            <InputDate @bind-Value="@dto.Birthday" />
+            <ValidationMessage For="@(() => dto.Birthday)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>PhoneNumber:</label>
+        <div>
+            <InputNumber @bind-Value="@dto.PhoneNumber" />
+            <ValidationMessage For="@(() => dto.PhoneNumber)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Email:</label>
+        <div>
+            <InputText @bind-Value="@dto.Email" />
+            <ValidationMessage For="@(() => dto.Email)" />
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-success">
         @ButtonText
     </button>
@@ -30,14 +79,15 @@
 @code {
     private string controllerRoute = "api/user";
 
-    private LoginDto dto { get; set; } = new LoginDto();
+    private RegisterUserDto dto { get; set; } = new RegisterUserDto()
+    {
+        Birthday = DateTime.Today
+    };
 
     public string ButtonText { get; set; } = "Register";
 
     private async Task RegisterUser()
     {
-        throw new NotImplementedException();
-
         await http.PostAsJsonAsync($"{controllerRoute}/register", dto);
         uriHelper.NavigateTo("product");
     }

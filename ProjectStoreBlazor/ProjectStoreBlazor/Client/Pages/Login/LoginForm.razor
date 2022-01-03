@@ -38,8 +38,6 @@
 
     private async Task Login()
     {
-        throw new NotImplementedException();
-
         await http.PostAsJsonAsync($"{controllerRoute}/login", dto);
         uriHelper.NavigateTo("product");
     }

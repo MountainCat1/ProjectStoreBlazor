@@ -52,9 +52,14 @@ namespace ProjectStoreBlazor.Server.Controllers
             return Ok();
         }
         [HttpPut]
-        public IActionResult ProductUpdate([FromForm] ProductDto product)
+        public async Task<IActionResult> ProductUpdate([FromForm] ProductDto product)
         {
-            return Ok(service.ProductUpdate(product, User));
+            Task task = service.ProductUpdate(product, User);
+
+            await task;
+            task.Start();
+
+            return Ok();
         }
     }
 }
