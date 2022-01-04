@@ -30,26 +30,41 @@ namespace ProjectStoreBlazor.Server.Controllers
             return Ok(await service.ProductGet(id));
         }
         [HttpPost]
-        public async Task<IActionResult> ProductAdd([FromBody]ProductDto product)
+        public async Task<IActionResult> ProductAdd(ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
 
             Task task = service.ProductAdd(product, userId);
 
-            task.Start();
+            //task.Start();
             await task;
 
-            return Ok();
+            if (task.Exception == null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(task.Exception);
+            }
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> ProductDelete([FromRoute] int id)
         {
             Task task = service.ProductDelete(id, User);
 
-            await task;
-            task.Start();
 
-            return Ok();
+            //task.Start();
+            await task;
+
+            if (task.Exception == null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(task.Exception);
+            }
         }
         [HttpPut]
         public async Task<IActionResult> ProductUpdate([FromForm] ProductDto product)
@@ -57,9 +72,16 @@ namespace ProjectStoreBlazor.Server.Controllers
             Task task = service.ProductUpdate(product, User);
 
             await task;
-            task.Start();
+            //task.Start();
 
-            return Ok();
+            if (task.Exception == null)
+            {
+                return Ok();
+            }
+            else
+            {
+                return BadRequest(task.Exception);
+            }
         }
     }
 }

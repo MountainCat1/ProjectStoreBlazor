@@ -3,6 +3,8 @@
 @inject NavigationManager uriHelper
 @inject IJSRuntime js
 
+@inject ICookieService cookieService;
+
 <h3>Login</h3>
 
 
@@ -34,17 +36,25 @@
 
     private LoginDto dto { get; set; } = new LoginDto();
 
-    public string ButtonText { get; set; } = "Register";
+    public string ButtonText { get; set; } = "Login";
 
     private async Task LoginUser()
     {
         var response = await http.PostAsJsonAsync($"{controllerRoute}/login", dto);
 
-        string token = await response.Content.ReadFromJsonAsync<string>();
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+        {
+            string token = await response.Content.ReadAsStringAsync();
 
-        var test = await js.InvokeAsync<string>("blazorExtensions.WriteCookie", new object[] { "token", token, 1 });
+            //await js.InvokeAsync<object>("WriteCookie.WriteCookie", "Authorization", $"{token}", DateTime.Now.AddMinutes(1));
+            await cookieService.WriteCookie("Authorization", token);
 
-        uriHelper.NavigateTo("product");
-
+            await js.InvokeVoidAsync("alert", $"Login successful!");
+            uriHelper.NavigateTo("");
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", $"Login failed!");
+        }
     }
 }

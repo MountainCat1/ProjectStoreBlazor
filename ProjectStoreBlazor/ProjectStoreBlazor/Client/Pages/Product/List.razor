@@ -1,6 +1,9 @@
 ﻿@page "/product"
 @inject HttpClient client
 @inject IJSRuntime js
+@inject HttpClient http
+
+@inject ICookieService cookieService
 
 <h3>Product</h3>
 <a class="btn btn-success" href="product/create">Create</a>
@@ -53,7 +56,14 @@
         var dto = Dtos.First(x => x.Id == id);
         if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {dto.Name}'s ({dto.Id}) Record?"))
         {
-            await client.DeleteAsync($"{controllerRoute}/{id}");
+            string token = await cookieService.ReadCookie("Authorization");
+            var response = await http.DeleteAsync($"{controllerRoute}/{id}", token);
+
+            if(response.StatusCode != System.Net.HttpStatusCode.OK)
+            {
+                await js.InvokeVoidAsync("alert", $"Something went wrong!");
+            }
+
             await OnInitializedAsync();
         }
     } 

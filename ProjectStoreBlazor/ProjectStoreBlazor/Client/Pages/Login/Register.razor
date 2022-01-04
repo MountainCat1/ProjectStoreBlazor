@@ -88,6 +88,13 @@
         var response = await http.PostAsJsonAsync($"{controllerRoute}/register", dto);
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
-            uriHelper.NavigateTo("index");
+        {
+            await js.InvokeVoidAsync("alert", $"Registration successful!");
+            uriHelper.NavigateTo("");
+        }
+        else
+        {
+            await js.InvokeVoidAsync("alert", $"Registration failed!");
+        }
     }
 }

@@ -27,6 +27,4 @@ namespace ProjectStoreBlazor.Server.Controllers
             return Ok(token);
         }
     }
-
-   
 }

@@ -39,7 +39,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                return null;
+                throw ex;// Task.CompletedTask;
             }
         }
 
@@ -57,7 +57,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                return null;
+                throw ex;// Task.CompletedTask;
             }
         }
 
@@ -77,8 +77,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-
-                await Task.CompletedTask;
+                throw ex;// Task.CompletedTask;
             }
         }
 
@@ -106,7 +105,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                await Task.CompletedTask;
+                throw ex;// Task.CompletedTask;
             }
         }
 
@@ -135,7 +134,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                await Task.CompletedTask;
+                throw ex;// Task.CompletedTask;
             }
         }
     }
