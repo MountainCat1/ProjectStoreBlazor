@@ -38,7 +38,13 @@
 
     private async Task Login()
     {
-        await http.PostAsJsonAsync($"{controllerRoute}/login", dto);
+        var response = await http.PostAsJsonAsync($"{controllerRoute}/login", dto);
+
+        string token = await response.Content.ReadFromJsonAsync<string>();
+
+        var test = await js.InvokeAsync<string>("blazorExtensions.WriteCookie", new object[] { "token", token, 1 });
+
         uriHelper.NavigateTo("product");
+
     }
 }

@@ -56,7 +56,7 @@
     </div>
 
     <div class="form-group ">
-        <label>PhoneNumber:</label>
+        <label>Phone Number:</label>
         <div>
             <InputNumber @bind-Value="@dto.PhoneNumber" />
             <ValidationMessage For="@(() => dto.PhoneNumber)" />
@@ -88,7 +88,9 @@
 
     private async Task RegisterUser()
     {
-        await http.PostAsJsonAsync($"{controllerRoute}/register", dto);
-        uriHelper.NavigateTo("product");
+        var response = await http.PostAsJsonAsync($"{controllerRoute}/register", dto);
+
+        if(response.StatusCode == System.Net.HttpStatusCode.OK)
+            uriHelper.NavigateTo("index");
     }
 }
