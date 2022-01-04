@@ -65,7 +65,7 @@ namespace ProjectStoreBlazor.Server
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<StoreSeeder>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-            //services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
+            services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<IProductService, ProductService>();
             //

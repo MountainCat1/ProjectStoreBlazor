@@ -6,7 +6,7 @@
 <h3>Register</h3>
 
 
-<EditForm Model="@dto" OnValidSubmit="@RegisterUser">
+<EditForm Model="@dto" OnValidSubmit="@RegisterUser" >
     <DataAnnotationsValidator />
     <div class="form-group">
         <label>Username:</label>
@@ -58,7 +58,7 @@
     <div class="form-group ">
         <label>Phone Number:</label>
         <div>
-            <InputNumber @bind-Value="@dto.PhoneNumber" />
+            <InputText @bind-Value="@dto.PhoneNumber" />
             <ValidationMessage For="@(() => dto.PhoneNumber)" />
         </div>
     </div>
@@ -77,12 +77,9 @@
 </EditForm>
 
 @code {
-    private string controllerRoute = "api/user";
+    private RegisterUserDto dto { get; set; } = new RegisterUserDto();
 
-    private RegisterUserDto dto { get; set; } = new RegisterUserDto()
-    {
-        Birthday = DateTime.Today
-    };
+    private string controllerRoute = "api/user";
 
     public string ButtonText { get; set; } = "Register";
 

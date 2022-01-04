@@ -30,7 +30,7 @@ namespace ProjectStoreBlazor.Server.Controllers
             return Ok(await service.ProductGet(id));
         }
         [HttpPost]
-        public async Task<IActionResult> ProductAdd([FromForm] ProductDto product)
+        public async Task<IActionResult> ProductAdd([FromBody]ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
 

@@ -15,13 +15,13 @@ namespace ProjectStoreBlazor.Server.Controllers
             _userService = userService;
         }
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromForm]RegisterUserDto dto)
+        public IActionResult RegisterUser([FromBody] RegisterUserDto dto)
         {
             _userService.RegisterUser(dto);
             return Ok();
         }
         [HttpPost("login")]
-        public IActionResult Login([FromForm] LoginDto dto)
+        public IActionResult Login([FromBody] LoginDto dto)
         {
             string token = _userService.GenerateJwt(dto);
             return Ok(token);

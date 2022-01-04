@@ -6,7 +6,7 @@
 <h3>Login</h3>
 
 
-<EditForm Model="@dto" OnValidSubmit="@Login">
+<EditForm Model="@dto" OnValidSubmit="@LoginUser">
     <DataAnnotationsValidator />
     <div class="form-group">
         <label>Username:</label>
@@ -36,7 +36,7 @@
 
     public string ButtonText { get; set; } = "Register";
 
-    private async Task Login()
+    private async Task LoginUser()
     {
         var response = await http.PostAsJsonAsync($"{controllerRoute}/login", dto);
 

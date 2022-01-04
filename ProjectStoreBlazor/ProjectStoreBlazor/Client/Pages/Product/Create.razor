@@ -11,10 +11,14 @@
     private string controllerRoute = "api/product";
 
     private ProductDto dto = new ProductDto();
-    
+
     async Task CreateEntity()
     {
         await http.PostAsJsonAsync($"{controllerRoute}", dto);
+        Console.WriteLine(dto.Name);
+         Console.WriteLine(dto.Description);
+          Console.WriteLine(dto.Price);
+           Console.WriteLine(dto.Name);
         uriHelper.NavigateTo("product");
     }
 }
