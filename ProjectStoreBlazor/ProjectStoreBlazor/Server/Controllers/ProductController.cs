@@ -67,9 +67,9 @@ namespace ProjectStoreBlazor.Server.Controllers
             }
         }
         [HttpPut]
-        public async Task<IActionResult> ProductUpdate([FromForm] ProductDto product)
+        public async Task<IActionResult> ProductUpdate([FromBody] ProductDto product)
         {
-            Task task = service.ProductUpdate(product, User);
+            Task task = service.ProductUpdate(product.Id, product, User);
 
             await task;
             //task.Start();

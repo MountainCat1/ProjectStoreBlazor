@@ -9,7 +9,7 @@ namespace ProjectStoreBlazor.Server.Services
     {
         Task ProductAdd(ProductDto product,int userId);
         Task ProductDelete(int id, ClaimsPrincipal user);
-        Task ProductUpdate(ProductDto product, ClaimsPrincipal user);
+        Task ProductUpdate(int id, ProductDto product, ClaimsPrincipal user);
         Task<List<ProductDto>> ProductGet();
         Task<ProductDto> ProductGet(int id);
     }

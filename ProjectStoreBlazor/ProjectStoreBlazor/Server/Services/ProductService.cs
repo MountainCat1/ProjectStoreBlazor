@@ -39,7 +39,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw ex;// Task.CompletedTask;
+                throw;// Task.CompletedTask;
             }
         }
 
@@ -57,7 +57,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw ex;// Task.CompletedTask;
+                throw;// Task.CompletedTask;
             }
         }
 
@@ -77,7 +77,7 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw ex;// Task.CompletedTask;
+                throw;// Task.CompletedTask;
             }
         }
 
@@ -94,7 +94,7 @@ namespace ProjectStoreBlazor.Server.Services
 
                 if (!authorizationResult.Succeeded)
                 {
-                    throw new ForbidException();
+                    throw new ForbidException("");
                 }
                 context.Products.Remove(product);
                 await context.SaveChangesAsync();
@@ -105,36 +105,44 @@ namespace ProjectStoreBlazor.Server.Services
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw ex;// Task.CompletedTask;
+                throw;// Task.CompletedTask;
             }
         }
 
-        public async Task ProductUpdate(ProductDto productDto,ClaimsPrincipal user)
+        public async Task ProductUpdate(int ProductId, ProductDto productDto, ClaimsPrincipal user)
         {
-            using var transaction = await context.Database.BeginTransactionAsync();
+            using var transaction = context.Database.BeginTransaction();
 
             try
             {
-                Product product = mapper.Map<Product>(productDto);
-
-                AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
-                    user, product, new ResourceOperationRequirement(ResourceOperation.Update)
-                );
-                if (!authorizationResult.Succeeded) 
+                var productInDb = context
+                    .Products
+                    .FirstOrDefault(p => p.Id == ProductId);
+                if (productInDb is null)
                 {
-                    throw new ForbidException();
+                    throw new NotFoundException("Restaurant not found");
                 }
 
-                context.Products.Update(product);
-                await context.SaveChangesAsync();
-                transaction.Commit();
+                // Product product = mapper.Map<Product>(productDto);
+                var authorizationResult = authorizationService.AuthorizeAsync(user, productInDb, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
+                if (!authorizationResult.Succeeded)
+                {
+                    throw new ForbidException("access denied");
+                }
+                productInDb.Name = productDto.Name;
+                productInDb.Description = productDto.Description;
+                productInDb.Image = productDto.Image;
+                productInDb.Price = productDto.Price;
 
+                context.Products.Update(productInDb);
+                context.SaveChanges();
+                transaction.Commit();
                 await Task.CompletedTask;
             }
             catch (Exception ex)
             {
                 transaction.Rollback();
-                throw ex;// Task.CompletedTask;
+                throw;// Task.CompletedTask;
             }
         }
     }
