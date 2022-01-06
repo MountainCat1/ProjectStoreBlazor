@@ -1,0 +1,76 @@
+﻿<EditForm Model="@Dto" OnValidSubmit="@OnValidSubmit" >
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label>Username:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Username" />
+            <ValidationMessage For="@(() => Dto.Username)" />
+        </div>
+    </div>
+    <div class="form-group ">
+        <label>Password:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Password" />
+            <ValidationMessage For="@(() => Dto.Password)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Confirm Password:</label>
+        <div>
+            <InputText @bind-Value="@Dto.ConfirmPassword" />
+            <ValidationMessage For="@(() => Dto.ConfirmPassword)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Name:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Name" />
+            <ValidationMessage For="@(() => Dto.Name)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Surname:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Surname" />
+            <ValidationMessage For="@(() => Dto.Surname)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Birthday:</label>
+        <div>
+            <InputDate @bind-Value="@Dto.Birthday" />
+            <ValidationMessage For="@(() => Dto.Birthday)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Phone Number:</label>
+        <div>
+            <InputText @bind-Value="@Dto.PhoneNumber" />
+            <ValidationMessage For="@(() => Dto.PhoneNumber)" />
+        </div>
+    </div>
+
+    <div class="form-group ">
+        <label>Email:</label>
+        <div>
+            <InputText @bind-Value="@Dto.Email" />
+            <ValidationMessage For="@(() => Dto.Email)" />
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        @ButtonText
+    </button>
+</EditForm>
+
+
+@code {
+    [Parameter] public RegisterUserDto Dto { get; set; }
+    [Parameter] public string ButtonText { get; set; } = "Register";
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+}
