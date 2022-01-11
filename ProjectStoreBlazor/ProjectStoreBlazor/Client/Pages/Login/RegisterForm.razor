@@ -10,7 +10,7 @@
     <div class="form-group ">
         <label>Password:</label>
         <div>
-            <InputText @bind-Value="@Dto.Password" />
+            <InputText type="password" @bind-Value="@Dto.Password" />
             <ValidationMessage For="@(() => Dto.Password)" />
         </div>
     </div>
@@ -18,7 +18,7 @@
     <div class="form-group ">
         <label>Confirm Password:</label>
         <div>
-            <InputText @bind-Value="@Dto.ConfirmPassword" />
+            <InputText type="password" @bind-Value="@Dto.ConfirmPassword" />
             <ValidationMessage For="@(() => Dto.ConfirmPassword)" />
         </div>
     </div>

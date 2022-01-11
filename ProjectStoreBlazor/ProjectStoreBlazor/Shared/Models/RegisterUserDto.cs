@@ -18,7 +18,6 @@ namespace ProjectStoreBlazor.Shared.Models
         [MaxLength(32, ErrorMessage = "Surname length must be between 1-32")]
         public string Surname { get; set; }
 
-        
 
         [MinLength(6, ErrorMessage = "Password length must be between 6-32")]
         public string Password { get; set; }

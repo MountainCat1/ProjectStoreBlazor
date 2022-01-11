@@ -6,7 +6,28 @@
 @inject ICookieService cookieService
 
 <h3>Product</h3>
-<a class="btn btn-success" href="product/create">Create</a>
+
+
+
+<div>
+    <a class="btn btn-success" href="product/create">Create</a>
+</div>
+
+
+
+
+<div style="" class="d-sm-flex justify-content-around p-5">
+    <div class="input-group">
+        <div class="form-outline">
+            <input @bind="@searchBarInput" class="form-control" placeholder="Search" />
+        </div>
+        <button type="button" class="btn btn-primary" @onclick="RefreshProducts">
+            <span class="oi oi-compass" aria-hidden="true"></span>
+        </button>
+    </div>
+</div>
+
+
 
 <table class="table">
     <tr>
@@ -47,11 +68,26 @@
     private string controllerRoute = "api/product";
     private ProductDto[] Dtos { get; set; } = new ProductDto[0];
 
+    private string searchBarInput = "";
+
     protected override async Task OnInitializedAsync()
     {
-        Dtos = await client.GetFromJsonAsync<ProductDto[]>($"{controllerRoute}");
+        await RefreshProducts();
     }
-    async Task Delete(int id)
+
+    private async Task RefreshProducts()
+    {
+        if (string.IsNullOrWhiteSpace(searchBarInput))
+        {
+            Dtos = await client.GetFromJsonAsync<ProductDto[]>($"{controllerRoute}");
+        }
+        else
+        {
+            Dtos = await client.GetFromJsonAsync<ProductDto[]>($"{controllerRoute}/{searchBarInput}");
+        }
+    }
+
+    private async Task Delete(int id)
     {
         var dto = Dtos.First(x => x.Id == id);
         if (await js.InvokeAsync<bool>("confirm", $"Do you want to delete {dto.Name}'s ({dto.Id}) Record?"))
@@ -59,12 +95,12 @@
             string token = await cookieService.ReadCookie("Authorization");
             var response = await http.DeleteAsync($"{controllerRoute}/{id}", token);
 
-            if(response.StatusCode != System.Net.HttpStatusCode.OK)
+            if (response.StatusCode != System.Net.HttpStatusCode.OK)
             {
                 await js.InvokeVoidAsync("alert", $"Something went wrong!");
             }
 
-            await OnInitializedAsync();
+            await RefreshProducts();
         }
-    } 
+    }
 }
