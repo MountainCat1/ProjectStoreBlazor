@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject IUserService userService;
+
 
 <div class="page">
     <div class="sidebar">
@@ -7,7 +9,30 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+            <div class="ml-md-auto">
+                <div class="card">
+                    <div class="card-body" style="padding: .25rem;">
+                        @if (userDto == null)
+                        {
+                            <div>
+                                Not Account
+                            </div>
+                        }
+                        else
+                        {
+                            <ul>
+                                <li>
+                                    
+                                </li>
+                            </ul>
+
+                        }
+                    </div>
+                </div>
+            </div>
+            <a href="http://blazor.net" target="_blank" class="ml-md-auto">
+                About
+            </a>
         </div>
 
         <div class="content px-4">
@@ -15,3 +40,12 @@
         </div>
     </div>
 </div>
+
+@code {
+    private UserDto userDto;
+
+    override protected async Task OnInitializedAsync()
+    {
+        //userDto = await userService.WhoAmI();
+    }
+}
