@@ -36,7 +36,7 @@ namespace ProjectStoreBlazor.Server.Services
 
                 return dtos;
             }
-            catch (Exception ex)
+            catch
             {
                 transaction.Rollback();
                 throw;// Task.CompletedTask;
@@ -54,10 +54,10 @@ namespace ProjectStoreBlazor.Server.Services
 
                 return dto;
             }
-            catch (Exception ex)
+            catch
             {
                 transaction.Rollback();
-                throw;// Task.CompletedTask;
+                throw;
             }
         }
 
@@ -69,12 +69,12 @@ namespace ProjectStoreBlazor.Server.Services
                 Product product = mapper.Map<Product>(productDto);
                 product.CreatedByUserId = userId;
                 await context.Products.AddAsync(product);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
                 transaction.Commit();
 
                 await Task.CompletedTask;
             }
-            catch (Exception ex)
+            catch
             {
                 transaction.Rollback();
                 throw;// Task.CompletedTask;
@@ -87,7 +87,7 @@ namespace ProjectStoreBlazor.Server.Services
 
             try
             {
-                Product product = await context.Products.FindAsync(id);
+                Product product = context.Products.Find(id);
                 AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
                     user, product, new ResourceOperationRequirement(ResourceOperation.Delete)
                 );
@@ -97,12 +97,12 @@ namespace ProjectStoreBlazor.Server.Services
                     throw new ForbidException("");
                 }
                 context.Products.Remove(product);
-                await context.SaveChangesAsync();
+                context.SaveChanges();
                 transaction.Commit();
 
                 await Task.CompletedTask;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
                 transaction.Rollback();
                 throw;// Task.CompletedTask;
@@ -120,7 +120,7 @@ namespace ProjectStoreBlazor.Server.Services
                     .FirstOrDefault(p => p.Id == ProductId);
                 if (productInDb is null)
                 {
-                    throw new NotFoundException("Restaurant not found");
+                    throw new NotFoundException("Product not found");
                 }
 
                 // Product product = mapper.Map<Product>(productDto);

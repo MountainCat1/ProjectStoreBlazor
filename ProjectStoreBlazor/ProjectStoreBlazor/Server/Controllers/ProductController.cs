@@ -2,8 +2,11 @@
 using ProjectStoreBlazor.Shared.Models;
 using ProjectStoreBlazor.Server.Services;
 using System.Security.Claims;
+using MediatR;
+using ProjectStoreBlazor.Server.Queries;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
+using ProjectStoreBlazor.Server.Commands;
 
 namespace ProjectStoreBlazor.Server.Controllers
 {
@@ -11,77 +14,43 @@ namespace ProjectStoreBlazor.Server.Controllers
     [Route("api/[controller]")]
     public class ProductController : Controller
     {
-        private readonly IProductService service;
+        
+        private readonly IMediator mediator;
 
-        public ProductController(IProductService service)
+        public ProductController(IMediator mediator)
         {
-            this.service = service;
+            this.mediator = mediator;
         }
+
 
         // Product CRUD
-        [HttpGet]
-        public async Task<IActionResult> ProductGet()
-        {
-            return Ok(await service.ProductGet());
-        }
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ProductGet([FromRoute] int id)
-        {
-            return Ok(await service.ProductGet(id));
-        }
         [HttpPost]
         public async Task<IActionResult> ProductAdd(ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
 
-            Task task = service.ProductAdd(product, userId);
-
-            //task.Start();
-            await task;
-
-            if (task.Exception == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest(task.Exception);
-            }
+            return Ok(await mediator.Send(new AddProductCommand(product, userId)));
+        }
+        [HttpGet]
+        public async Task<IActionResult> ProductGet()
+        {
+            return Ok(await mediator.Send(new GetProductListQuery()));
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ProductGetById([FromRoute] int id)
+        {
+            return Ok(await mediator.Send(new GetProductByIdQuery(id)));
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> ProductDelete([FromRoute] int id)
         {
-            Task task = service.ProductDelete(id, User);
-
-
-            //task.Start();
-            await task;
-
-            if (task.Exception == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest(task.Exception);
-            }
+            return Ok(await mediator.Send(new DeleteProductCommand(id,User)));
         }
         [HttpPut]
-        public async Task<IActionResult> ProductUpdate([FromBody] ProductDto product)
+        public async Task<IActionResult> ProductUpdate([FromRoute]int productId,ProductDto product)
         {
-            Task task = service.ProductUpdate(product.Id, product, User);
-
-            await task;
-            //task.Start();
-
-            if (task.Exception == null)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest(task.Exception);
-            }
+            productId = product.Id;
+            return Ok(await mediator.Send(new UpdateProductCommand( productId, product,User)));
         }
     }
 }

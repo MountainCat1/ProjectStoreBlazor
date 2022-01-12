@@ -4,11 +4,10 @@ namespace ProjectStoreBlazor.Server.Authorization
 {
     public enum ResourceOperation 
     {
-    Create,
-    Read,
-    Update,
-    Delete,
-    
+        Create,
+        Read,
+        Update,
+        Delete,
     }
     public class ResourceOperationRequirement:IAuthorizationRequirement
     {

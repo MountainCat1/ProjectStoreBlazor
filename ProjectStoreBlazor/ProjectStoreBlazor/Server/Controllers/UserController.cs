@@ -1,30 +1,37 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using ProjectStoreBlazor.Shared.Models;
 using ProjectStoreBlazor.Server.Services;
+using System.Threading.Tasks;
+using ProjectStoreBlazor.Server.Commands;
 
 namespace ProjectStoreBlazor.Server.Controllers
 {
-    [Route("api/[controller]")] 
     [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService)
+        public UserController(IMediator mediator)
         {
-            _userService = userService;
+            _mediator=mediator;
         }
         [HttpPost("register")]
-        public IActionResult RegisterUser([FromBody] RegisterUserDto dto)
-        {
-            _userService.RegisterUser(dto);
-            return Ok();
+        public async Task<IActionResult> RegisterUser([FromBody]RegisterUserDto dto)
+        {            
+          return Ok(await _mediator.Send(new RegisterUserCommand(dto)));
         }
+
+
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDto dto)
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            string token = _userService.GenerateJwt(dto);
-            return Ok(token);
+            
+            return Ok(await _mediator.Send(new LoginUserCommand(dto)));
         }
+
     }
+
+   
 }

@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -68,9 +69,9 @@ namespace ProjectStoreBlazor.Server
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserValidator>();
             services.AddScoped<ErrorHandlingMiddleware>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddMediatR(typeof(Startup).Assembly);
+
             //
-
-
             services.AddControllersWithViews();
             services.AddRazorPages();
         }
