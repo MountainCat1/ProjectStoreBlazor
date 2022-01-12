@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProjectStoreBlazor.Server.Entities;
@@ -14,19 +15,26 @@ using System.Text;
 
 namespace ProjectStoreBlazor.Server.Services
 {
-    public class UserService : IUserService
+    public class UserService :  IUserService
     {
         private readonly StoreDbContext _context;
         private readonly IMapper _mapper;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
 
-        public UserService(StoreDbContext context, IMapper mapper,IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        public UserService(StoreDbContext context, IMapper mapper, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
         {
             _context = context;
             _mapper = mapper;
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+        }
+
+        public UserDto GetUserFromJWTToken(int userId)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.UserId == userId);
+            var userDto = _mapper.Map<UserDto>(user);
+            return userDto;
         }
         public void RegisterUser(RegisterUserDto dto)
         {
@@ -38,10 +46,10 @@ namespace ProjectStoreBlazor.Server.Services
             _context.SaveChanges();
         }
 
-        public string GenerateJwt(LoginDto dto) 
+        public string GenerateJwt(LoginDto dto)
         {
             var user = _context.Users
-                .Include(u=>u.Role)
+                .Include(u => u.Role)
                 .FirstOrDefault(u => u.Username == dto.Username);
             if (user is null)
             {
@@ -49,7 +57,7 @@ namespace ProjectStoreBlazor.Server.Services
             }
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
-            if (result == PasswordVerificationResult.Failed) 
+            if (result == PasswordVerificationResult.Failed)
             {
                 throw new BadRequestException("Invalid username or password");
             }

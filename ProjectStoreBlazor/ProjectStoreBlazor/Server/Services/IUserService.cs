@@ -4,7 +4,8 @@ namespace ProjectStoreBlazor.Server.Services
 {
     public interface IUserService
     {
+        string GenerateJwt(LoginDto dto);
+        UserDto GetUserFromJWTToken(int userId);
         void RegisterUser(RegisterUserDto dto);
-        public string GenerateJwt(LoginDto dto);
     }
 }

@@ -4,6 +4,8 @@ using ProjectStoreBlazor.Shared.Models;
 using ProjectStoreBlazor.Server.Services;
 using System.Threading.Tasks;
 using ProjectStoreBlazor.Server.Commands;
+using ProjectStoreBlazor.Server.Queries;
+using System.Security.Claims;
 
 namespace ProjectStoreBlazor.Server.Controllers
 {
@@ -30,7 +32,12 @@ namespace ProjectStoreBlazor.Server.Controllers
             
             return Ok(await _mediator.Send(new LoginUserCommand(dto)));
         }
-
+        [HttpGet("dupa")]
+        public async Task<IActionResult> GetUserDataFromSession()
+        {
+            var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
+            return Ok(await _mediator.Send(new GetUserDataQuery(userId)));
+        }
     }
 
    
