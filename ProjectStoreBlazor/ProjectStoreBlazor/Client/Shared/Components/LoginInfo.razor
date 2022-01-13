@@ -1,0 +1,49 @@
+﻿@inject IUserService userService;
+@inject ICookieService cookieService;
+@inject NavigationManager uriHelper;
+
+<div class="card">
+    <div class="card-body" style="padding: .25rem; font-size: 1.2rem">
+        @if (userDto == null)
+        {
+            <div style="padding: .25rem;">
+                Not logged in 
+            </div>
+            <div style="padding: .15rem;"  class="m-auto">
+                <NavLink class="nav-link" href="login" style="text-align: left">
+                    <button class="btn btn-primary">
+                        Log in
+                    </button>
+                </NavLink>
+            </div>
+        }
+        else
+        {
+            <div style="padding: .25rem;"  class="m-auto">
+                Username: <b>@userDto.Username</b>
+            </div>
+            <div style="padding: .15rem;">
+                <button class="btn btn-primary" @onclick=@LogOut>
+                    Log out
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    private UserDto userDto;
+
+
+    override protected async Task OnInitializedAsync()
+    {
+        userDto = await userService.WhoAmI();
+    }
+
+    private async Task LogOut()
+    {
+        Console.WriteLine("Loggin out...");
+        await cookieService.ClearCookie("Authorization");
+        uriHelper.NavigateTo(uriHelper.Uri, forceLoad: true);
+    }
+}

@@ -50,7 +50,7 @@
             await cookieService.WriteCookie("Authorization", token);
 
             await js.InvokeVoidAsync("alert", $"Login successful!");
-            uriHelper.NavigateTo("");
+            uriHelper.NavigateTo("", forceLoad:true);
         }
         else
         {

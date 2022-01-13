@@ -18,6 +18,11 @@ namespace ProjectStoreBlazor.Client.Services
             await js.InvokeAsync<object>("WriteCookie.WriteCookie", name, value, DateTime.Now.AddMinutes(1));
         }
 
+        public async Task ClearCookie(string name)
+        {
+            await WriteCookie(name, null);
+        }
+
         public async Task<string> ReadCookie(string name)
         {
             return await js.InvokeAsync<string>("ReadCookie.ReadCookie", name);

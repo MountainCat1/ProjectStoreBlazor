@@ -32,10 +32,14 @@ namespace ProjectStoreBlazor.Server.Controllers
             
             return Ok(await _mediator.Send(new LoginUserCommand(dto)));
         }
-        [HttpGet("dupa")]
+        [HttpGet]
         public async Task<IActionResult> GetUserDataFromSession()
         {
-            var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
+            var claim = User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier);
+            if (claim == null)
+                return NotFound(null);
+
+            var userId = int.Parse(claim.Value);
             return Ok(await _mediator.Send(new GetUserDataQuery(userId)));
         }
     }

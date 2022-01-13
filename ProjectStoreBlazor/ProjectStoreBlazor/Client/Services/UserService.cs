@@ -1,4 +1,5 @@
-﻿using ProjectStoreBlazor.Shared.Models;
+﻿using ProjectStoreBlazor.Client.Extensions;
+using ProjectStoreBlazor.Shared.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace ProjectStoreBlazor.Client.Services
         {
             string authToken = await cookieService.ReadCookie("Authorization");
 
-            UserDto userDto = await client.GetFromJsonAsync<UserDto>($"{controllerRoute}/{authToken}");
+            UserDto userDto = await client.ReadJsonAsync<UserDto>($"{controllerRoute}", authToken);
 
             return userDto;
         }

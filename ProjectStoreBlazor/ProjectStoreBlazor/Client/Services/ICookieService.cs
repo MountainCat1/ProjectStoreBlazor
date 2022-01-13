@@ -6,5 +6,6 @@ namespace ProjectStoreBlazor.Client.Services
     {
         Task<string> ReadCookie(string name);
         Task WriteCookie(string name, string value);
+        Task ClearCookie(string name);
     }
 }

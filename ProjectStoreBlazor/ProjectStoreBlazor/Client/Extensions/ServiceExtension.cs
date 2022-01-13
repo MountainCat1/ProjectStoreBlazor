@@ -13,7 +13,7 @@ namespace ProjectStoreBlazor.Client.Extensions
 
     public static class ServiceExtensions
     {
-        public static async Task<T> ReadJsonAsync<T>(this HttpClient httpClient, string url, string token)
+        public static async Task<T> ReadJsonAsync<T>(this HttpClient httpClient, string url, string token) where T : class
         {
             // create request object
             var request = new HttpRequestMessage(HttpMethod.Get, url);
@@ -23,6 +23,9 @@ namespace ProjectStoreBlazor.Client.Extensions
 
             // send request
             var httpResponse = await httpClient.SendAsync(request);
+
+            if (httpResponse.StatusCode != System.Net.HttpStatusCode.OK)
+                return null;
 
             // convert http response data to UsersResponse object
             return await httpResponse.Content.ReadFromJsonAsync<T>();
