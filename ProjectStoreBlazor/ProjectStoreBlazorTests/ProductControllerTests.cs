@@ -47,8 +47,8 @@ namespace ProjectStoreBlazorTests
             //arange
             var model = new ProductDto()
             {
-                Name = "testproduct1",
-                Description = "producttotest",
+                Name = "bacardi",
+                Description = "w Klubie ze szklanki",
                 IsAvailable = true,
                 Price = 420,
 
@@ -64,9 +64,10 @@ namespace ProjectStoreBlazorTests
         }
         [Fact]
         public async Task DeleteProduct_ForNonExistingProduct_ReturnsNotFound()
-        {
+        {   //arange
+            var productId = 997;
             //act
-           var response = await _client.DeleteAsync("/api/Product/{997}");
+            var response = await _client.DeleteAsync($"/api/Product/{productId}");
             //assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
            
@@ -96,7 +97,7 @@ namespace ProjectStoreBlazorTests
 
 
         [Fact]
-        public async void GetElementById_WithIdParameter_ReturnOkResult()
+        public async void GetElementById_WithValidIdParameter_ReturnOkResult()
         {
             //arange
             var model = new ProductDto()
