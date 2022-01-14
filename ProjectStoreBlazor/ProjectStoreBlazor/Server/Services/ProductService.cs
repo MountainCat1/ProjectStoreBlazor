@@ -27,7 +27,7 @@ namespace ProjectStoreBlazor.Server.Services
 
         public async Task<List<ProductDto>> ProductGet()
         {
-            using var transaction = context.Database.BeginTransaction();
+            
 
             try
             {
@@ -38,14 +38,14 @@ namespace ProjectStoreBlazor.Server.Services
             }
             catch
             {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
+                
+                throw;
             }
         }
 
         public async Task<ProductDto> ProductGet(int id)
         {
-            using var transaction = context.Database.BeginTransaction();
+            
 
             try
             {
@@ -54,10 +54,10 @@ namespace ProjectStoreBlazor.Server.Services
 
                 return dto;
             }
-            catch
+            catch(Exception e)
             {
-                transaction.Rollback();
-                throw;
+
+                throw new Exception("Error while getting list of objects", e);
             }
         }
 
@@ -77,13 +77,13 @@ namespace ProjectStoreBlazor.Server.Services
             catch(Exception e)
             {
                 
-                throw new Exception("Error while addind an object",e);// Task.CompletedTask;
+                throw new Exception("Error while adding an object",e);
             }
         }
 
         public async Task ProductDelete(int id, ClaimsPrincipal user)
         {
-            using var transaction = await context.Database.BeginTransactionAsync();
+            
 
             try
             {
@@ -98,20 +98,19 @@ namespace ProjectStoreBlazor.Server.Services
                 }
                 context.Products.Remove(product);
                 context.SaveChanges();
-                transaction.Commit();
-
+             
                 await Task.CompletedTask;
             }
-            catch(Exception ex)
+            catch(Exception e)
             {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
+
+                throw new Exception("Error while removing an object", e); ;
             }
         }
 
         public async Task ProductUpdate(int ProductId, ProductDto productDto, ClaimsPrincipal user)
         {
-            using var transaction = context.Database.BeginTransaction();
+           
 
             try
             {
@@ -123,7 +122,7 @@ namespace ProjectStoreBlazor.Server.Services
                     throw new NotFoundException("Product not found");
                 }
 
-                // Product product = mapper.Map<Product>(productDto);
+                
                 var authorizationResult = authorizationService.AuthorizeAsync(user, productInDb, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
                 if (!authorizationResult.Succeeded)
                 {
@@ -136,13 +135,13 @@ namespace ProjectStoreBlazor.Server.Services
 
                 context.Products.Update(productInDb);
                 context.SaveChanges();
-                transaction.Commit();
+                
                 await Task.CompletedTask;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
+
+                throw new Exception("Error while adding an object", e);
             }
         }
     }
