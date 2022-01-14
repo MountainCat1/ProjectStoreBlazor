@@ -7,12 +7,12 @@ namespace ProjectStoreBlazor.Server.Entities
     public class StoreDbContext : DbContext
     {
 
-        //public StoreDbContext(DbContextOptions<StoreDbContext> options) :base(options)
-        //{
+        public StoreDbContext(DbContextOptions<StoreDbContext> options) : base(options)
+        {
 
-        //}
+        }
 
-        private string _connectionString = "Server=(localdb)\\mssqllocaldb;Database=ProjectStore;Trusted_Connection=True;";
+       
         public DbSet<User> Users { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Address> Addresses { get; set; }
@@ -47,10 +47,7 @@ namespace ProjectStoreBlazor.Server.Entities
 
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer(_connectionString);
-        }
+       
 
     }
 }

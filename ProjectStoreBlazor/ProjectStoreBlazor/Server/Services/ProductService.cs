@@ -63,21 +63,21 @@ namespace ProjectStoreBlazor.Server.Services
 
         public async Task ProductAdd(ProductDto productDto,int userId )
         {
-            using var transaction = await context.Database.BeginTransactionAsync();
+            
             try
             {
                 Product product = mapper.Map<Product>(productDto);
                 product.CreatedByUserId = userId;
                 await context.Products.AddAsync(product);
                 context.SaveChanges();
-                transaction.Commit();
+                
 
                 await Task.CompletedTask;
             }
-            catch
+            catch(Exception e)
             {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
+                
+                throw new Exception("Error while addind an object",e);// Task.CompletedTask;
             }
         }
 
