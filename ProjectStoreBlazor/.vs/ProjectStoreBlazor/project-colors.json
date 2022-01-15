@@ -20,7 +20,12 @@
       "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
       "DisplayName": "Różne pliki",
       "ColorIndex": -1
+    },
+    "f3578364-cedb-455a-9eb2-5de0fdae6f5c": {
+      "ProjectGuid": "f3578364-cedb-455a-9eb2-5de0fdae6f5c",
+      "DisplayName": "ProjectStoreBlazorTests",
+      "ColorIndex": 3
     }
   },
-  "NextColorIndex": 3
+  "NextColorIndex": 4
 }

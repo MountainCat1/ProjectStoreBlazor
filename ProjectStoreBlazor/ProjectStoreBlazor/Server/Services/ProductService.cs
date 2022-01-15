@@ -27,123 +27,90 @@ namespace ProjectStoreBlazor.Server.Services
 
         public async Task<List<ProductDto>> ProductGet()
         {
-            using var transaction = context.Database.BeginTransaction();
-
-            try
+            List<Product> entities = await context.Products.ToListAsync();
+            if (entities is null)
             {
-                List<Product> entities = await context.Products.ToListAsync();
-                List<ProductDto> dtos = mapper.Map<List<ProductDto>>(entities);
+                throw new NotFoundException("Products not found");
+            }
+            List<ProductDto> dtos = mapper.Map<List<ProductDto>>(entities);
 
-                return dtos;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
-            }
+            return dtos;
+           
         }
 
         public async Task<ProductDto> ProductGet(int id)
         {
-            using var transaction = context.Database.BeginTransaction();
-
-            try
+            Product entity = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
+            if (entity is null)
             {
-                Product entity = await context.Products.FirstOrDefaultAsync(x => x.Id == id);
-                ProductDto dto = mapper.Map<ProductDto>(entity);
+                throw new NotFoundException("Product not found");
+            }
+            ProductDto dto = mapper.Map<ProductDto>(entity);
 
-                return dto;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            return dto;
         }
 
         public async Task ProductAdd(ProductDto productDto,int userId )
         {
-            using var transaction = await context.Database.BeginTransactionAsync();
-            try
-            {
-                Product product = mapper.Map<Product>(productDto);
-                product.CreatedByUserId = userId;
-                await context.Products.AddAsync(product);
-                context.SaveChanges();
-                transaction.Commit();
+             Product product = mapper.Map<Product>(productDto);
+             product.CreatedByUserId = userId;
+             await context.Products.AddAsync(product);
+             context.SaveChanges();
+                
 
-                await Task.CompletedTask;
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
-            }
+             await Task.CompletedTask;
+           
         }
 
         public async Task ProductDelete(int id, ClaimsPrincipal user)
         {
-            using var transaction = await context.Database.BeginTransactionAsync();
+             Product product = context.Products.Find(id);
+             AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
+                 user, product, new ResourceOperationRequirement(ResourceOperation.Delete));
 
-            try
-            {
-                Product product = context.Products.Find(id);
-                AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(
-                    user, product, new ResourceOperationRequirement(ResourceOperation.Delete)
-                );
-
-                if (!authorizationResult.Succeeded)
-                {
-                    throw new ForbidException("");
-                }
-                context.Products.Remove(product);
-                context.SaveChanges();
-                transaction.Commit();
-
-                await Task.CompletedTask;
-            }
-            catch(Exception ex)
-            {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
-            }
+             if (!authorizationResult.Succeeded)
+             {
+                 throw new ForbidException("No access");
+             }
+             context.Products.Remove(product);
+             context.SaveChanges();
+             
+             await Task.CompletedTask;
+           
         }
 
         public async Task ProductUpdate(int ProductId, ProductDto productDto, ClaimsPrincipal user)
         {
-            using var transaction = context.Database.BeginTransaction();
+             var productInDb = context
+                 .Products
+                 .FirstOrDefault(p => p.Id == ProductId);
+             if (productInDb is null)
+             {
+                 throw new NotFoundException("Product not found");
+             }
 
-            try
-            {
-                var productInDb = context
-                    .Products
-                    .FirstOrDefault(p => p.Id == ProductId);
-                if (productInDb is null)
-                {
-                    throw new NotFoundException("Product not found");
-                }
+             
+             var authorizationResult = authorizationService.AuthorizeAsync
+                (user, productInDb, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
 
-                // Product product = mapper.Map<Product>(productDto);
-                var authorizationResult = authorizationService.AuthorizeAsync(user, productInDb, new ResourceOperationRequirement(ResourceOperation.Update)).Result;
-                if (!authorizationResult.Succeeded)
-                {
-                    throw new ForbidException("access denied");
-                }
+             if (!authorizationResult.Succeeded)
+             {
+                 throw new ForbidException("access denied");
+             }
+            if(productDto.Name != null)
                 productInDb.Name = productDto.Name;
+            if (productDto.Description != null)
                 productInDb.Description = productDto.Description;
+            if (productDto.Image != null)
                 productInDb.Image = productDto.Image;
+            if (productDto.Price != null)
                 productInDb.Price = productDto.Price;
 
-                context.Products.Update(productInDb);
-                context.SaveChanges();
-                transaction.Commit();
-                await Task.CompletedTask;
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                throw;// Task.CompletedTask;
-            }
+             context.Products.Update(productInDb);
+             context.SaveChanges();
+             
+             await Task.CompletedTask;
+           
         }
     }
 }

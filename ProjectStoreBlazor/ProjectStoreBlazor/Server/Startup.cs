@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -61,7 +62,7 @@ namespace ProjectStoreBlazor.Server
             services.AddScoped<IAuthorizationHandler, ResourceOperationRequirementHandler>();
             services.AddControllersWithViews().AddFluentValidation();
             services.AddSwaggerGen();
-            services.AddDbContext<StoreDbContext>();
+            services.AddDbContext<StoreDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ProjectStoreDbConnection"))); ;
             services.AddAutoMapper(typeof(Program).Assembly);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<StoreSeeder>();

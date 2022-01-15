@@ -38,8 +38,7 @@ namespace ProjectStoreBlazor.Server.Services
         }
         public void RegisterUser(RegisterUserDto dto)
         {
-            var newUser = new User();
-            newUser = _mapper.Map<User>(dto);
+            var newUser = _mapper.Map<User>(dto);
             var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
             newUser.PasswordHash = hashedPassword;
             _context.Users.Add(newUser);
