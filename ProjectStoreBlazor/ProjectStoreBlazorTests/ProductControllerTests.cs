@@ -38,7 +38,15 @@ namespace ProjectStoreBlazorTests
                     });
                 });
             _client = _factory.CreateClient();
-                
+
+        }
+        private void Seed(Product product)
+        {
+            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
+            using var scope = scopeFactory.CreateScope();
+            var _dbContext = scope.ServiceProvider.GetService<StoreDbContext>();
+            _dbContext.Products.Add(product);
+            _dbContext.SaveChanges();
         }
 
         [Fact]
@@ -56,10 +64,10 @@ namespace ProjectStoreBlazorTests
             var json = JsonConvert.SerializeObject(model);
             var httpContent = new StringContent(json, UnicodeEncoding.UTF8, "application/json");
             //act
-            var response = await _client.PostAsync("api/Product", httpContent);
+            var response = await _client.PostAsync("Product/Add", httpContent);
             //assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
-            
+
 
         }
         [Fact]
@@ -67,27 +75,25 @@ namespace ProjectStoreBlazorTests
         {   //arange
             var productId = 997;
             //act
-            var response = await _client.DeleteAsync($"/api/Product/{productId}");
+            var response = await _client.DeleteAsync($"Product/Delete/{productId}");
             //assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
-           
+
         }
         [Fact]
-        public async Task Delete_ForValidUser_ReturnsNoContent() 
+        public async Task Delete_ForValidUser_ReturnsNoContent()
         {
             //arrange
-           
+
             var product = new Product
             {
                 CreatedByUserId = 1,
                 Name = "Test"
             };
             //seed
-            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-            var _dbContext = scope.ServiceProvider.GetService<StoreDbContext>();
+            Seed(product);
             //act
-            var response = await _client.DeleteAsync($"api/Product/{product.Id}");
+            var response = await _client.DeleteAsync($"Product/Delete/{product.CreatedByUserId}");
 
             //assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
@@ -100,23 +106,25 @@ namespace ProjectStoreBlazorTests
         public async void GetElementById_WithValidIdParameter_ReturnOkResult()
         {
             //arange
-            var model = new ProductDto()
+            var product = new Product()
             {
+                Id = 1,
                 Name = "testproduct1",
                 Description = "producttotest",
                 IsAvailable = true,
                 Price = 420,
 
             };
-            //act
-            var response = await _client.GetAsync($"/Product/Get/{1}");
             //seed
-            var scopeFactory = _factory.Services.GetService<IServiceScopeFactory>();
-            using var scope = scopeFactory.CreateScope();
-            var _dbContext = scope.ServiceProvider.GetService<StoreDbContext>();
+
+            Seed(product);
+            //act
+            var response = await _client.GetAsync($"Product/Get/{1}");
+
 
             //assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
         }
     }
+
 }
