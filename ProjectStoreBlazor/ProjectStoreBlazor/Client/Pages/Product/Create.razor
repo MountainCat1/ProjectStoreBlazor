@@ -16,19 +16,15 @@
 
     async Task CreateEntity()
     {
-        //await http.PostAsJsonAsync($"{controllerRoute}", dto, );
-        //string token = await js.InvokeAsync<string>("ReadCookie.ReadCookie", "Authorization");
         string token = await cookieService.ReadCookie("Authorization");
 
         var response = await http.PostJsonAsync($"{controllerRoute}", dto, token);
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
             uriHelper.NavigateTo("product");
-        }
         else
-        {
             await js.InvokeVoidAsync("alert", $"Something went wrong!");
-        }
     }
 }
+
+

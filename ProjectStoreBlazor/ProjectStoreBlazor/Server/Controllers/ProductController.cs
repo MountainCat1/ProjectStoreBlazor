@@ -28,33 +28,28 @@ namespace ProjectStoreBlazor.Server.Controllers
         public async Task<IActionResult> ProductAdd(ProductDto product)
         {
             var userId = int.Parse(User.FindFirst(u => u.Type == ClaimTypes.NameIdentifier).Value);
-            await mediator.Send(new AddProductCommand(product, userId));
-            return Ok();
+            return Ok(await mediator.Send(new AddProductCommand(product, userId)));
         }
         [HttpGet]
         public async Task<IActionResult> ProductGet()
         {
-            await mediator.Send(new GetProductListQuery());
-            return Ok();
+            return Ok(await mediator.Send(new GetProductListQuery()));
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> ProductGetById([FromRoute] int id)
         {
-            await mediator.Send(new GetProductByIdQuery(id));
-            return Ok();
+            return Ok(await mediator.Send(new GetProductByIdQuery(id)));
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> ProductDelete([FromRoute] int id)
         {
-            await mediator.Send(new DeleteProductCommand(id, User));
-            return Ok();
+            return Ok(await mediator.Send(new DeleteProductCommand(id, User)));
         }
         [HttpPut]
         public async Task<IActionResult> ProductUpdate([FromRoute]int productId,ProductDto product)
         {
             productId = product.Id;
-            await mediator.Send(new UpdateProductCommand(productId, product, User));
-            return Ok();
+            return Ok(await mediator.Send(new UpdateProductCommand(productId, product, User)));
         }
     }
 }

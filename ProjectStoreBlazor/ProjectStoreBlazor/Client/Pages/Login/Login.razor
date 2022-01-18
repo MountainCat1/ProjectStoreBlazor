@@ -46,7 +46,6 @@
         {
             string token = await response.Content.ReadAsStringAsync();
 
-            //await js.InvokeAsync<object>("WriteCookie.WriteCookie", "Authorization", $"{token}", DateTime.Now.AddMinutes(1));
             await cookieService.WriteCookie("Authorization", token);
 
             await js.InvokeVoidAsync("alert", $"Login successful!");
@@ -58,3 +57,6 @@
         }
     }
 }
+
+
+

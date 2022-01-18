@@ -12,7 +12,6 @@ namespace ProjectStoreBlazor.Client.Services
         {
             this.js = js;
         }
-
         public async Task WriteCookie(string name, string value)
         {
             await js.InvokeAsync<object>("WriteCookie.WriteCookie", name, value, DateTime.Now.AddMinutes(1));

@@ -23,18 +23,15 @@
     }
     async Task EditEntity()
     {
-        //await http.PutAsJsonAsync($"{controllerRoute}", dto);
         string token = await cookieService.ReadCookie("Authorization");
 
         var response = await http.PutJsonAsync($"{controllerRoute}", dto, token);
 
         if(response.StatusCode == System.Net.HttpStatusCode.OK)
-        {
             uriHelper.NavigateTo("product");
-        }
         else
-        {
             await js.InvokeVoidAsync("alert", $"Something went wrong!");
-        }
     }
 }
+
+

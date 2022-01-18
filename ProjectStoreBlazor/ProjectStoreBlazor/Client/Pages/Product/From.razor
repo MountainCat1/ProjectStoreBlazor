@@ -23,7 +23,6 @@
             <ValidationMessage For="@(() => Dto.Price)" />
         </div>
     </div>
-
     <div class="form-group">
         <label>Is Avaliable:</label>
         <div>
@@ -31,7 +30,6 @@
             <ValidationMessage For="@(() => Dto.IsAvailable)" />
         </div>
     </div>
-
     <button type="submit" class="btn btn-success">
         @ButtonText
     </button>
@@ -41,3 +39,7 @@
     [Parameter] public string ButtonText { get; set; } = "Save";
     [Parameter] public EventCallback OnValidSubmit { get; set; }
 }
+
+
+
+
